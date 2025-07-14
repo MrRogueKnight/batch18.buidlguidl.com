@@ -8,7 +8,7 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 const Home: NextPage = () => {
   const { data: checkedInCount } = useScaffoldReadContract({
     contractName: "BatchRegistry",
-    functionName: "checkedInCounter"
+    functionName: "checkedInCounter",
   });
 
   return (
