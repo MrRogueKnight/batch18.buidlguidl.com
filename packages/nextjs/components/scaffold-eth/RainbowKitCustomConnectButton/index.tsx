@@ -5,6 +5,7 @@ import { AddressQRCodeModal } from "./AddressQRCodeModal";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Address } from "viem";
+import { useAccount } from "wagmi";
 import { useNetworkColor } from "~~/hooks/scaffold-eth";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
@@ -16,11 +17,9 @@ import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
 export const RainbowKitCustomConnectButton = () => {
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
+  const { address: currentAddress } = useAccount();
 
-  // We'll use a state to store the current account address
-  const [currentAddress, setCurrentAddress] = React.useState<Address | undefined>(undefined);
-
-  // Add contract read hooks for batch membership and checked-in status
+  // Contract read hooks at the top level
   const { data: isBatchMember } = useScaffoldReadContract({
     contractName: "BatchRegistry",
     functionName: "allowList",
@@ -31,30 +30,11 @@ export const RainbowKitCustomConnectButton = () => {
     functionName: "yourContractAddress",
     args: [currentAddress],
   });
-  // Helper to check for zero address
   const isCheckedIn = checkedInAddress && checkedInAddress !== "0x0000000000000000000000000000000000000000";
-
-  // We'll use a ref to store the last account address
-  const accountRef = React.useRef<string | undefined>(undefined);
-
-  // This effect will update currentAddress when the account changes
-  // We'll get the account address from the ConnectButton.Custom render prop via a setter
-  const setAccountAddress = React.useCallback((address: string | undefined) => {
-    if (address && accountRef.current !== address) {
-      accountRef.current = address;
-      setCurrentAddress(address as Address);
-    } else if (!address && accountRef.current !== undefined) {
-      accountRef.current = undefined;
-      setCurrentAddress(undefined);
-    }
-  }, []);
 
   return (
     <ConnectButton.Custom>
       {({ account, chain, openConnectModal, mounted }) => {
-        // Call the setter for account address on every render
-        setAccountAddress(account?.address);
-
         const connected = mounted && account && chain;
         const blockExplorerAddressLink = account
           ? getBlockExplorerAddressLink(targetNetwork, account.address)
