@@ -9,9 +9,9 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Address } from "viem";
 import { useAccount } from "wagmi";
 import { useNetworkColor } from "~~/hooks/scaffold-eth";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 /**
  * Custom Wagmi Connect Button (watch balance + custom design)
