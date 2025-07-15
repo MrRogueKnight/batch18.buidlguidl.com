@@ -2,6 +2,7 @@
 
 // @refresh reset
 import { Balance } from "../Balance";
+import { ConnectedWalletStatus } from "../ConnectedWalletStatus";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";
 import { AddressQRCodeModal } from "./AddressQRCodeModal";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
@@ -12,7 +13,6 @@ import { useNetworkColor } from "~~/hooks/scaffold-eth";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
-import { ConnectedWalletStatus } from "../ConnectedWalletStatus";
 
 /**
  * Custom Wagmi Connect Button (watch balance + custom design)
