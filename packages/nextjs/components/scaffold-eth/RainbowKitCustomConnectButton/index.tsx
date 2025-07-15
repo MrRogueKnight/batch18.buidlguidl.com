@@ -12,6 +12,7 @@ import { useNetworkColor } from "~~/hooks/scaffold-eth";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
+import { ConnectedWalletStatus } from "../ConnectedWalletStatus";
 
 /**
  * Custom Wagmi Connect Button (watch balance + custom design)
@@ -72,25 +73,7 @@ export const RainbowKitCustomConnectButton = () => {
                       ensAvatar={account.ensAvatar}
                       blockExplorerAddressLink={blockExplorerAddressLink}
                     />
-                    {/* Badges for batch member and checked-in status */}
-                    {isBatchMember && (
-                      <span
-                        className="ml-2 badge badge-primary text-base align-middle"
-                        title="This address is a Batch 18 member"
-                        aria-label="Batch 18 member"
-                      >
-                        🎓 Batch 18
-                      </span>
-                    )}
-                    {isCheckedIn && (
-                      <span
-                        className="ml-1 badge badge-success text-base align-middle"
-                        title="This address is checked in"
-                        aria-label="Checked in"
-                      >
-                        🟢 Checked In
-                      </span>
-                    )}
+                    <ConnectedWalletStatus isBatchMember={Boolean(isBatchMember)} isCheckedIn={Boolean(isCheckedIn)} />
                   </div>
                   <AddressQRCodeModal address={account.address as Address} modalId="qrcode-modal" />
                 </>
