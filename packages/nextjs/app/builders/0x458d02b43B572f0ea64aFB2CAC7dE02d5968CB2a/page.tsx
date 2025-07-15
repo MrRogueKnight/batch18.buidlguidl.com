@@ -1,14 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import { Address } from "../../../components/scaffold-eth/Address/Address";
 import ProfilePic from "./profilepic.jpg";
 import { NextPage } from "next";
 
 const TrynaxProfile: NextPage = () => {
-  function copyWalletAddress() {
-    navigator.clipboard.writeText("0x458d02b43B572f0ea64aFB2CAC7dE02d5968CB2a");
-    alert("Wallet address copied to clipboard!");
-  }
+  const TRYNAXADDRESS = "0x458d02b43B572f0ea64aFB2CAC7dE02d5968CB2a";
+
   return (
     <div className="w-full max-w-4xl mx-auto my-8 px-6 py-6 relative bg-base-100  min-h-screen">
       <div className="text-center border-b border-base-300 pb-8 mb-8">
@@ -29,13 +28,7 @@ const TrynaxProfile: NextPage = () => {
         <h1 className="text-3xl font-bold mb-2">Trynax</h1>
         <p className="text-lg text-base-content/70 mb-4">Software Engineer</p>
         <div className="flex justify-center items-center space-x-2 text-sm">
-          <span
-            className="badge badge-primary cursor-pointer hover:badge-primary-focus transition-colors flex items-center gap-1"
-            onClick={copyWalletAddress}
-            title="Click to copy wallet address"
-          >
-            📋 0x458d...8CB2a
-          </span>
+          <Address address={TRYNAXADDRESS} format="short" />
           <span className="text-base-content/50">•</span>
           <span className="text-base-content/70">I get curious about stuff and I learn about them.</span>
         </div>
@@ -118,13 +111,13 @@ const TrynaxProfile: NextPage = () => {
               </h2>
               <div className="space-y-4">
                 <div className="p-3 bg-base-100 rounded-lg">
-                  <h3 className="font-semibold text-primary">Frontend at Choice Exchange (DEX on Injective)</h3>
+                  <h3 className="font-semibold text-white font-bold">Frontend at Choice Exchange (DEX on Injective)</h3>
                   <p className="text-sm text-base-content/70">
                     Building user interface components and integrating with smart contracts
                   </p>
                 </div>
                 <div className="p-3 bg-base-100 rounded-lg">
-                  <h3 className="font-semibold text-secondary">Building a Buybot</h3>
+                  <h3 className="font-semibold text-white font-bold">Building a Buybot</h3>
                   <p className="text-sm text-base-content/70">Built a buy bot for a few tokens on Injective</p>
                 </div>
               </div>
@@ -201,7 +194,9 @@ const TrynaxProfile: NextPage = () => {
           &quot;Building tomorrow&apos;s decentralized world, today&quot; 🌟
         </p>
         <div className="mt-4 text-sm text-base-content/50">
-          <span>BuidlGuidl Batch 18 • Ethereum Address: 0x458d02b43B572f0ea64aFB2CAC7dE02d5968CB2a</span>
+          <span className="flex gap-2 justify-center">
+            BuidlGuidl Batch 18 • Ethereum Address: <Address address={TRYNAXADDRESS} format="long" />
+          </span>
         </div>
       </div>
     </div>
