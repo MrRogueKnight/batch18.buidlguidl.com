@@ -1,5 +1,3 @@
-"use client";
-
 import { NextPage } from "next";
 import { FaCube, FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 import { Address } from "~~/components/scaffold-eth";
