@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { Address } from "../../../components/scaffold-eth/Address/Address";
 import ProfilePic from "./profilepic.jpg";
@@ -111,13 +109,13 @@ const TrynaxProfile: NextPage = () => {
               </h2>
               <div className="space-y-4">
                 <div className="p-3 bg-base-100 rounded-lg">
-                  <h3 className="font-semibold text-white font-bold">Frontend at Choice Exchange (DEX on Injective)</h3>
+                  <h3 className="font-semibold font-bold">Frontend at Choice Exchange (DEX on Injective)</h3>
                   <p className="text-sm text-base-content/70">
                     Building user interface components and integrating with smart contracts
                   </p>
                 </div>
                 <div className="p-3 bg-base-100 rounded-lg">
-                  <h3 className="font-semibold text-white font-bold">Building a Buybot</h3>
+                  <h3 className="font-semibold font-bold">Building a Buybot</h3>
                   <p className="text-sm text-base-content/70">Built a buy bot for a few tokens on Injective</p>
                 </div>
               </div>
@@ -194,8 +192,14 @@ const TrynaxProfile: NextPage = () => {
           &quot;Building tomorrow&apos;s decentralized world, today&quot; 🌟
         </p>
         <div className="mt-4 text-sm text-base-content/50">
-          <span className="flex gap-2 justify-center">
-            BuidlGuidl Batch 18 • Ethereum Address: <Address address={TRYNAXADDRESS} format="long" />
+          <span
+            className="flex gap-2 flex-col sm:flex-row
+           justify-center items-center"
+          >
+            BuidlGuidl Batch 18 • Ethereum Address:
+            <span className="break-all">
+              <Address address={TRYNAXADDRESS} format="long" />
+            </span>
           </span>
         </div>
       </div>
