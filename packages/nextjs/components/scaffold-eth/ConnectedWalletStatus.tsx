@@ -1,12 +1,23 @@
 import React from "react";
+import { useAccount } from "wagmi";
 import { CheckCircleIcon, UsersIcon } from "@heroicons/react/24/solid";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
-interface ConnectedWalletStatusProps {
-  isBatchMember: boolean;
-  isCheckedIn: boolean;
-}
+export const ConnectedWalletStatus: React.FC = () => {
+  const { address: currentAddress } = useAccount();
 
-export const ConnectedWalletStatus: React.FC<ConnectedWalletStatusProps> = ({ isBatchMember, isCheckedIn }) => {
+  const { data: isBatchMember } = useScaffoldReadContract({
+    contractName: "BatchRegistry",
+    functionName: "allowList",
+    args: [currentAddress],
+  });
+  const { data: checkedInAddress } = useScaffoldReadContract({
+    contractName: "BatchRegistry",
+    functionName: "yourContractAddress",
+    args: [currentAddress],
+  });
+  const isCheckedIn = checkedInAddress && checkedInAddress !== "0x0000000000000000000000000000000000000000";
+
   if (isCheckedIn) {
     return (
       <span
