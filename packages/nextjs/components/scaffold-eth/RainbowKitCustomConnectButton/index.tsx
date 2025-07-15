@@ -2,6 +2,7 @@
 
 // @refresh reset
 import { Balance } from "../Balance";
+import { ConnectedWalletStatus } from "../ConnectedWalletStatus";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";
 import { AddressQRCodeModal } from "./AddressQRCodeModal";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
@@ -49,12 +50,15 @@ export const RainbowKitCustomConnectButton = () => {
                       {chain.name}
                     </span>
                   </div>
-                  <AddressInfoDropdown
-                    address={account.address as Address}
-                    displayName={account.displayName}
-                    ensAvatar={account.ensAvatar}
-                    blockExplorerAddressLink={blockExplorerAddressLink}
-                  />
+                  <div className="flex items-center">
+                    <AddressInfoDropdown
+                      address={account.address as Address}
+                      displayName={account.displayName}
+                      ensAvatar={account.ensAvatar}
+                      blockExplorerAddressLink={blockExplorerAddressLink}
+                    />
+                    <ConnectedWalletStatus />
+                  </div>
                   <AddressQRCodeModal address={account.address as Address} modalId="qrcode-modal" />
                 </>
               );
