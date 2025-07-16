@@ -23,7 +23,6 @@ const Web3ProfilePage: NextPage = () => {
           height={100}
           className="rounded-full object-cover shadow-sm mx-auto mb-4"
           priority
-          unoptimized
         />
         <h1 className="text-3xl font-bold text-blue-600 mb-2">Gul Ahmed</h1>
         <p className="text-gray-600 mb-4">
