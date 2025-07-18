@@ -5,12 +5,12 @@ import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 
 type Props = {
-  publishedBuilder: string[];
+  publishedBuilders: string[];
 };
 
 const CONTRACT_FROM_BLOCK: bigint = 355913556n;
 
-export default function BuildersGrid({ publishedBuilder }: Props) {
+export default function BuildersGrid({ publishedBuilders }: Props) {
   const { data: checkedInEvents, isLoading: isEventsLoading } = useScaffoldEventHistory({
     contractName: "BatchRegistry",
     eventName: "CheckedIn",
@@ -41,7 +41,7 @@ export default function BuildersGrid({ publishedBuilder }: Props) {
                 </div>
                 <div className="flex gap-3 items-center">
                   <span className="font-bold w-1/4">Profile</span>
-                  {publishedBuilder.includes(event.args.builder ?? "") ? (
+                  {publishedBuilders.includes(event.args.builder ?? "") ? (
                     <div className="flex gap-3 items-center">
                       <Link href={`builders/${event.args.builder}`} target="_blank">
                         <button className="btn btn-secondary btn-xs self-end md:self-start">View 🧑‍💻</button>
