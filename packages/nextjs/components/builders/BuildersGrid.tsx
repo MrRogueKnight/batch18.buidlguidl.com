@@ -1,0 +1,61 @@
+"use client";
+
+import Link from "next/link";
+import { Address } from "~~/components/scaffold-eth";
+import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
+
+type Props = {
+  publishedBuilder: string[];
+};
+
+const CONTRACT_FROM_BLOCK: bigint = 355913556n;
+
+export default function BuildersGrid({ publishedBuilder }: Props) {
+  const { data: checkedInEvents, isLoading: isEventsLoading } = useScaffoldEventHistory({
+    contractName: "BatchRegistry",
+    eventName: "CheckedIn",
+    fromBlock: CONTRACT_FROM_BLOCK,
+    blocksBatchSize: 5000000, // default 500, so slowly.
+  });
+  const filteredEvents = checkedInEvents?.filter(event => event?.args?.first);
+
+  return isEventsLoading ? (
+    <p>Loading checked-in events...</p>
+  ) : (
+    <div className="grid grid-cols-1 lg:grid-cols-3 px-6 lg:px-10 lg:gap-4 w-full max-w-7xl">
+      {filteredEvents?.map((event, index) => {
+        return (
+          <div
+            key={index}
+            className="bg-base-100 border-base-300 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 py-4"
+          >
+            <div className="flex">
+              <div className="flex flex-col gap-1 w-full">
+                <div className="flex gap-3 items-center">
+                  <span className="font-bold w-1/4">Builder</span>
+                  <Address address={event.args.builder} onlyEnsOrAddress />
+                </div>
+                <div className="flex gap-3 items-center">
+                  <span className="font-bold w-1/4">Contract</span>
+                  <Address address={event.args.checkInContract} format="short" onlyEnsOrAddress />
+                </div>
+                <div className="flex gap-3 items-center">
+                  <span className="font-bold w-1/4">Profile</span>
+                  {publishedBuilder.includes(event.args.builder ?? "") ? (
+                    <div className="flex gap-3 items-center">
+                      <Link href={`builders/${event.args.builder}`} target="_blank">
+                        <button className="btn btn-secondary btn-xs self-end md:self-start">View 🧑‍💻</button>
+                      </Link>
+                    </div>
+                  ) : (
+                    <span className="text-sm">N/A</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
