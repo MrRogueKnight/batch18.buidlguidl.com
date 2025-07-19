@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   devIndicators: false,
   images: {
-    //domains: ["avatars.githubusercontent.com"],
     remotePatterns: [
       {
         protocol: "https",
