@@ -22,27 +22,31 @@ export default function BuildersGrid({ publishedBuilders }: Props) {
   return isEventsLoading ? (
     <p>Loading checked-in events...</p>
   ) : (
-    <div className="grid grid-cols-1 lg:grid-cols-3 px-6 lg:px-10 lg:gap-4 w-full max-w-7xl">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-6 md:px-8 lg:px-10 gap-1 md:gap-2 lg:gap-4 w-full max-w-7xl">
       {filteredEvents?.map((event, index) => {
         return (
           <div
             key={index}
-            className="bg-base-100 border-base-300 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 py-4"
+            className="bg-base-100 border-base-300 border shadow-md shadow-secondary rounded-3xl px-4 py-4"
           >
             <div className="flex">
               <div className="flex flex-col gap-1 w-full">
-                <div className="flex gap-3 items-center">
-                  <span className="font-bold w-1/4">Builder</span>
-                  <Address address={event.args.builder} onlyEnsOrAddress />
+                <div className="flex gap-2">
+                  <span className="font-bold">Builder</span>
+                  <div className="truncate flex-1">
+                    <Address address={event.args.builder} format="short" onlyEnsOrAddress />
+                  </div>
                 </div>
-                <div className="flex gap-3 items-center">
-                  <span className="font-bold w-1/4">Contract</span>
-                  <Address address={event.args.checkInContract} format="short" onlyEnsOrAddress />
+                <div className="flex gap-2">
+                  <span className="font-bold">Contract</span>
+                  <div className="truncate flex-1">
+                    <Address address={event.args.checkInContract} format="short" onlyEnsOrAddress />
+                  </div>
                 </div>
-                <div className="flex gap-3 items-center">
-                  <span className="font-bold w-1/4">Profile</span>
+                <div className="flex gap-2">
+                  <span className="font-bold">Profile</span>
                   {publishedBuilders.includes(event.args.builder ?? "") ? (
-                    <div className="flex gap-3 items-center">
+                    <div className="flex gap-2 items-center">
                       <Link href={`builders/${event.args.builder}`} target="_blank">
                         <button className="btn btn-secondary btn-xs self-end md:self-start">View 🧑‍💻</button>
                       </Link>
