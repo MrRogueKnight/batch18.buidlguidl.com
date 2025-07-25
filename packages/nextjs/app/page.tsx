@@ -1,9 +1,24 @@
 "use client";
 
-import Link from "next/link";
-import { useScaffoldReadContract } from "../hooks/scaffold-eth";
+import { useMemo } from "react";
+import Constellation, { type Builder } from "../components/Constellation";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useScaffoldEventHistory, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+
+const CONSTELLATION_LAYOUT = [
+  { id: "v1", position: { x: 5, y: 15 }, size: "large" as const },
+  { id: "v2", position: { x: 35, y: 5 }, size: "small" as const },
+  { id: "v3", position: { x: 90, y: 25 }, size: "small" as const },
+  { id: "v4", position: { x: 75, y: 50 }, size: "small" as const },
+  { id: "v7", position: { x: 50, y: 90 }, size: "small" as const },
+  { id: "v8", position: { x: 25, y: 95 }, size: "small" as const },
+  { id: "v9", position: { x: 0, y: 75 }, size: "large" as const },
+  { id: "v10", position: { x: 45, y: 30 }, size: "small" as const },
+  { id: "v11", position: { x: 15, y: 40 }, size: "small" as const },
+  { id: "v12", position: { x: 45, y: 65 }, size: "large" as const },
+];
+
+const CONTRACT_FROM_BLOCK: bigint = 355913556n;
 
 const Home: NextPage = () => {
   const { data: checkedInCounter } = useScaffoldReadContract({
@@ -11,43 +26,64 @@ const Home: NextPage = () => {
     functionName: "checkedInCounter",
   });
 
+  const { data: checkedInEvents, isLoading: isEventsLoading } = useScaffoldEventHistory({
+    contractName: "BatchRegistry",
+    eventName: "CheckedIn",
+    fromBlock: CONTRACT_FROM_BLOCK,
+    blocksBatchSize: 5000000,
+  });
+
+  const processedBuilders: Builder[] = useMemo(() => {
+    const uniqueEvents = checkedInEvents?.filter(
+      (event, index, self) => index === self.findIndex(e => e.args.builder === event.args.builder),
+    );
+
+    return CONSTELLATION_LAYOUT.map((layoutNode, index) => {
+      const event = uniqueEvents?.[index];
+      const address = event?.args.builder ?? "";
+
+      return {
+        id: layoutNode.id,
+        address: address,
+        position: layoutNode.position,
+        size: layoutNode.size,
+      };
+    });
+  }, [checkedInEvents]);
+
   return (
     <>
-      <div className="flex items-center flex-col grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Batch 18</span>
-          </h1>
-          <p className="text-center text-lg">Get started by taking a look at your batch GitHub repository.</p>
-          <p className="text-lg flex gap-2 justify-center">
-            <span className="font-bold">Checked in builders count:</span>
-            <span>{checkedInCounter?.toString() || "Loading..."}</span>
-          </p>
-        </div>
+      <div
+        className="flex grow h-full relative overflow-hidden"
+        style={{
+          backgroundImage: "url('/background.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/60" />
 
-        <div className="grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contracts
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
+        <div className="relative z-10 flex w-full">
+          <div className="w-full md:w-1/3 flex flex-col justify-center items-start p-8 md:pl-24">
+            <h1 className="text-white text-left">
+              <span className="block text-4xl md:text-5xl">Welcome to</span>
+              <span className="block text-6xl md:text-7xl font-bold mt-2">Batch 18</span>
+            </h1>
+            <p className="text-left text-lg text-gray-300 mt-6 max-w-md">
+              Get started by taking a look at your batch GitHub repository.
+            </p>
+            <p className="text-lg flex gap-2 items-center mt-8 font-mono bg-black/40 backdrop-blur-sm p-3 rounded-lg text-cyan-300 border border-cyan-300/20">
+              <span className="font-bold text-gray-200">Checked in builders:</span>
+              <span className="text-xl">{checkedInCounter?.toString() || "..."}</span>
+            </p>
+          </div>
+
+          <div className="hidden md:flex w-2/3 h-full">
+            {isEventsLoading ? (
+              <p className="m-auto text-white">Loading Constellation...</p>
+            ) : (
+              <Constellation builders={processedBuilders} />
+            )}
           </div>
         </div>
       </div>
