@@ -1,21 +1,23 @@
 "use client";
 
 import { useMemo } from "react";
-import Constellation, { type Builder } from "../components/Constellation";
+import Constellation, { type ConstellationNode } from "../components/Constellation";
+import { generateConnections } from "../utils/scaffold-eth/graphUtils";
 import type { NextPage } from "next";
 import { useScaffoldEventHistory, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 const CONSTELLATION_LAYOUT = [
-  { id: "v1", position: { x: 5, y: 15 }, size: "large" as const },
-  { id: "v2", position: { x: 35, y: 5 }, size: "small" as const },
-  { id: "v3", position: { x: 90, y: 25 }, size: "small" as const },
-  { id: "v4", position: { x: 75, y: 50 }, size: "small" as const },
-  { id: "v7", position: { x: 50, y: 90 }, size: "small" as const },
-  { id: "v8", position: { x: 25, y: 95 }, size: "small" as const },
-  { id: "v9", position: { x: 0, y: 75 }, size: "large" as const },
-  { id: "v10", position: { x: 45, y: 30 }, size: "small" as const },
-  { id: "v11", position: { x: 15, y: 40 }, size: "small" as const },
-  { id: "v12", position: { x: 45, y: 65 }, size: "large" as const },
+  { position: { x: 5, y: 15 }, size: "large" as const },
+  { position: { x: 35, y: 5 }, size: "small" as const },
+  { position: { x: 90, y: 25 }, size: "small" as const },
+  { position: { x: 75, y: 50 }, size: "small" as const },
+  { position: { x: 70, y: 75 }, size: "small" as const },
+  { position: { x: 40, y: 55 }, size: "small" as const },
+  { position: { x: 30, y: 85 }, size: "small" as const },
+  { position: { x: 0, y: 75 }, size: "large" as const },
+  { position: { x: 45, y: 30 }, size: "small" as const },
+  { position: { x: 15, y: 40 }, size: "small" as const },
+  { position: { x: 45, y: 65 }, size: "large" as const },
 ];
 
 const CONTRACT_FROM_BLOCK: bigint = 355913556n;
@@ -33,34 +35,32 @@ const Home: NextPage = () => {
     blocksBatchSize: 5000000,
   });
 
-  const processedBuilders: Builder[] = useMemo(() => {
-    const uniqueEvents = checkedInEvents?.filter(
+  const { nodes, connections } = useMemo(() => {
+    if (!checkedInEvents) {
+      return { nodes: [], connections: [] };
+    }
+
+    const uniqueEvents = checkedInEvents.filter(
       (event, index, self) => index === self.findIndex(e => e.args.builder === event.args.builder),
     );
 
-    return CONSTELLATION_LAYOUT.map((layoutNode, index) => {
+    const nodes: ConstellationNode[] = CONSTELLATION_LAYOUT.map((layoutNode, index) => {
       const event = uniqueEvents?.[index];
-      const address = event?.args.builder ?? "";
-
       return {
-        id: layoutNode.id,
-        address: address,
+        address: event?.args.builder ?? "",
         position: layoutNode.position,
         size: layoutNode.size,
       };
     });
+
+    const connections = generateConnections(nodes, 35);
+
+    return { nodes, connections };
   }, [checkedInEvents]);
 
   return (
     <>
-      <div
-        className="flex grow h-full relative overflow-hidden"
-        style={{
-          backgroundImage: "url('/background.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
+      <div className="flex grow h-full relative overflow-hidden bg-[url('/background.png')] bg-cover bg-center">
         <div className="absolute inset-0 bg-black/60" />
 
         <div className="relative z-10 flex w-full">
@@ -79,10 +79,10 @@ const Home: NextPage = () => {
           </div>
 
           <div className="hidden md:flex w-2/3 h-full">
-            {isEventsLoading ? (
+            {isEventsLoading || !checkedInEvents ? (
               <p className="m-auto text-white">Loading Constellation...</p>
             ) : (
-              <Constellation builders={processedBuilders} />
+              <Constellation nodes={nodes} connections={connections} />
             )}
           </div>
         </div>
