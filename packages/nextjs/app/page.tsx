@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { useScaffoldReadContract } from "../hooks/scaffold-eth";
+import Constellation from "../components/Constellation";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
   const { data: checkedInCounter } = useScaffoldReadContract({
@@ -12,46 +11,29 @@ const Home: NextPage = () => {
   });
 
   return (
-    <>
-      <div className="flex items-center flex-col grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Batch 18</span>
+    <div className="flex grow h-full relative overflow-hidden bg-[url('/background.png')] bg-cover bg-center">
+      <div className="absolute inset-0 bg-black/60" />
+
+      <div className="relative z-10 flex w-full">
+        <div className="w-full md:w-1/3 flex flex-col justify-center items-start p-8 md:pl-24">
+          <h1 className="text-white text-left">
+            <span className="block text-4xl md:text-5xl">Welcome to</span>
+            <span className="block text-6xl md:text-7xl font-bold mt-2">Batch 18</span>
           </h1>
-          <p className="text-center text-lg">Get started by taking a look at your batch GitHub repository.</p>
-          <p className="text-lg flex gap-2 justify-center">
-            <span className="font-bold">Checked in builders count:</span>
-            <span>{checkedInCounter?.toString() || "Loading..."}</span>
+          <p className="text-left text-lg text-gray-300 mt-6 max-w-md">
+            Your journey into innovation, collaboration, and real-world impact begins here.
+          </p>
+          <p className="text-lg flex gap-2 items-center mt-8 font-mono bg-black/40 backdrop-blur-sm p-3 rounded-lg text-cyan-300 border border-cyan-300/20">
+            <span className="font-bold text-gray-200">Checked in builders:</span>
+            <span className="text-xl">{checkedInCounter?.toString() || "..."}</span>
           </p>
         </div>
 
-        <div className="grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contracts
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-          </div>
+        <div className="hidden md:flex w-2/3 h-full">
+          <Constellation />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
