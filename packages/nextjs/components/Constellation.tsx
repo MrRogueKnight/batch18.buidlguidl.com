@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
+import { generateConnections } from "../utils/scaffold-eth/graphUtils";
 import { Address } from "~~/components/scaffold-eth";
+import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 
 export type ConstellationNode = {
   address: string;
@@ -9,10 +11,21 @@ export type ConstellationNode = {
   size: "large" | "small";
 };
 
-type ConstellationProps = {
-  nodes: ConstellationNode[];
-  connections: { from: number; to: number }[];
-};
+const CONSTELLATION_LAYOUT = [
+  { position: { x: 5, y: 15 }, size: "large" as const },
+  { position: { x: 35, y: 5 }, size: "small" as const },
+  { position: { x: 90, y: 25 }, size: "small" as const },
+  { position: { x: 75, y: 50 }, size: "small" as const },
+  { position: { x: 70, y: 75 }, size: "small" as const },
+  { position: { x: 40, y: 55 }, size: "small" as const },
+  { position: { x: 30, y: 85 }, size: "small" as const },
+  { position: { x: 0, y: 75 }, size: "large" as const },
+  { position: { x: 45, y: 30 }, size: "small" as const },
+  { position: { x: 15, y: 40 }, size: "small" as const },
+  { position: { x: 45, y: 65 }, size: "large" as const },
+];
+
+const CONTRACT_FROM_BLOCK: bigint = 355913556n;
 
 const BuilderPoint = ({ isLarge, delay }: { isLarge: boolean; delay: string }) => {
   const sizeClass = isLarge ? "w-8 h-8" : "w-5 h-5";
@@ -36,14 +49,41 @@ const BuilderLabel = ({ address, isRightEdge }: { address?: string; isRightEdge:
   address ? (
     <div
       className={`absolute top-1/2 -translate-y-1/2 flex items-center w-max p-2 text-center rounded-full pointer-events-none backdrop-blur-md
-      bg-white/70 dark:bg-black/60
-      ${isRightEdge ? "right-full mr-6" : "left-full ml-6"}`}
+        bg-white/70 dark:bg-black/60
+        ${isRightEdge ? "right-full mr-6" : "left-full ml-6"}`}
     >
       <Address address={address} />
     </div>
   ) : null;
 
-const Constellation = ({ nodes, connections }: ConstellationProps) => {
+const Constellation = () => {
+  const { data: checkedInEvents, isLoading } = useScaffoldEventHistory({
+    contractName: "BatchRegistry",
+    eventName: "CheckedIn",
+    fromBlock: CONTRACT_FROM_BLOCK,
+    blocksBatchSize: 5000000,
+  });
+
+  const { nodes, connections } = useMemo(() => {
+    if (!checkedInEvents) return { nodes: [], connections: [] };
+
+    const uniqueEvents = checkedInEvents.filter(
+      (event, idx, self) => idx === self.findIndex(e => e.args.builder === event.args.builder),
+    );
+
+    const nodes: ConstellationNode[] = CONSTELLATION_LAYOUT.map((layoutNode, idx) => {
+      const event = uniqueEvents[idx];
+      return {
+        address: event?.args.builder ?? "",
+        position: layoutNode.position,
+        size: layoutNode.size,
+      };
+    });
+
+    const connections = generateConnections(nodes, 35);
+    return { nodes, connections };
+  }, [checkedInEvents]);
+
   const animationDelays = useMemo(() => {
     const delays: Record<string, string> = {};
     nodes.forEach(node => {
@@ -54,9 +94,12 @@ const Constellation = ({ nodes, connections }: ConstellationProps) => {
     return delays;
   }, [nodes]);
 
+  if (isLoading || !checkedInEvents) {
+    return <p className="m-auto text-white">Loading Constellation...</p>;
+  }
+
   return (
     <div className="relative w-full h-full">
-      {/* SVG Lines */}
       <svg className="absolute inset-0 w-full h-full">
         <defs>
           <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -79,7 +122,6 @@ const Constellation = ({ nodes, connections }: ConstellationProps) => {
         ))}
       </svg>
 
-      {/* Node Points + Labels */}
       {nodes.map(({ address, position, size }, index) => {
         if (!address) return null;
 
