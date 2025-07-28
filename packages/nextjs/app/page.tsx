@@ -21,7 +21,7 @@ const Home: NextPage = () => {
             <span className="block text-6xl md:text-7xl font-bold mt-2">Batch 18</span>
           </h1>
           <p className="text-left text-lg text-gray-300 mt-6 max-w-md">
-            Get started by taking a look at your batch GitHub repository.
+            Your journey into innovation, collaboration, and real-world impact begins here.
           </p>
           <p className="text-lg flex gap-2 items-center mt-8 font-mono bg-black/40 backdrop-blur-sm p-3 rounded-lg text-cyan-300 border border-cyan-300/20">
             <span className="font-bold text-gray-200">Checked in builders:</span>
